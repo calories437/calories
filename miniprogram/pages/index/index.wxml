@@ -1,0 +1,38 @@
+<form bindsubmit="formSubmit">
+<!-- 给form添加bindsubmit属性，值为formSubmit，即表单提交后触发formSubmit函数，formSubmit函数写在index.js里。-->
+
+<view class='form'>
+
+<view class='input'>
+
+<view>input</view>
+
+<input name="input_content" value='{{input}}' class='input-box' placeholder="please input here"/>
+<!-- 给input组件添加name属性，值为input_content，表示表单提交后该输入框的值的键的名字是input_content。-->
+<!-- 给input组件添加value属性，值为变量input的值，用于成功提交后清空输入框的显示的值。-->
+</view>
+
+<view>
+
+<button class='button' formType="submit">{{text}}</button>
+<!-- 给button组件添加formType属性，值为submit，表示该按钮为提交表单的按钮，点击则提交表单，form表单组件内部所有带name属性的组件的值都会被传递给formSubmit函数。-->
+</view>
+
+<view class='input'>
+
+<view>从数据库读取目标记录</view>
+
+<text>{{record}}</text>
+
+</view>
+
+<view>
+
+<button class='button'  bindtap='read'>读取</button>
+<!-- 给button组件添加bindtap属性，值为read，表示点击该按钮触发read函数，read函数写在同目录下的index.js文件里。-->
+
+</view>
+
+</view>
+
+</form>

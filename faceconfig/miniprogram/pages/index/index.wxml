@@ -1,0 +1,4 @@
+<!--pages/camera/camera.wxml-->
+<camera device-position="{{device}}" flash="off" binderror="error" style="width: 100%; height: 300px;"></camera>
+<switch bindtap='switchchange'></switch>
+<button type="primary" bindtap="takePhoto">刷脸登录</button>

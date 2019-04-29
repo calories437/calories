@@ -1,0 +1,68 @@
+{
+  "usingComponents": {}
+}
+public function login() {
+  $dir = "./Uploads/temp/";
+  if (!file_exists($dir)) {
+    mkdir($dir,
+    0777, true);
+  }
+  $upload = new \Think\Upload(); // 实例化上传类
+  $upload -> maxSize = 2048000; // 设置附件上传大小
+  $upload -> exts = array('jpg', 'gif', 'png', 'jpeg'); // 设置附件上传类型
+  $upload -> rootPath = $dir; // 设置附件上传根目录
+  $upload -> savePath = ''; // 设置附件上传（子）目录
+  $upload -> autoSub=false; //禁止自动创建子目录
+  //上传文件
+  $info = $upload -> uploadOne($_FILES['file'
+  ]);
+  if (!$info) { // 上传错误提示错误信息
+    echo json_encode(array('error'=> true, 'msg'=> $upload -> getError()));
+  } else { // 上传成功 获取上传文件信息
+    // return $this->ajaxReturn(array('error'=>false,'msg'=>$info['savepath'].$info['savename']));
+    $file = $dir.$info['savepath'
+    ].$info['savename'
+    ];
+    $image = base64_encode(file_get_contents($file));
+    $dir = APP_PATH.'/face-sdk/';
+    require_once $dir. 'AipFace.php';
+    $APP_ID = '11257174';
+    $API_KEY = '8e9X3fP68QQ4lWqRGm9usYQh';
+    $SECRET_KEY = 'GVst6bFZ4nnEk7pVWzqsAO2FnRcr9Vyy';
+    $client = new \AipFace($APP_ID, $API_KEY, $SECRET_KEY);
+    $options['liveness_control'
+    ] = 'NORMAL';
+    $options['max_user_num'
+    ] = '1';
+    $ret = $client -> search($image, 'BASE64', $this -> face_group(), $options);
+    // echo json_encode($ret,JSON_UNESCAPED_UNICODE);
+    // exit;
+
+    if ($ret['error_code'
+    ] == 0) {
+      $user = $ret['result'
+      ]['user_list'
+      ][
+        0
+      ];
+      $no = $user['user_id'
+      ];
+      $score = $user['score'
+      ];
+
+      if (!empty($no)) {
+        $data = M('student') -> field('no,name,sex') -> where("no='{$no}'") -> find();
+
+        if ($data) {
+          $data['score'
+          ] = $score;
+          echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        }
+      } else {
+        echo "本数据库没有该学生";
+      }
+    } else {
+      echo "活体检测失败";
+    }
+  }
+}
